@@ -28,7 +28,7 @@ public class ShoppingCart {
     public double getSubtotal() {
         BigDecimal subtotal = BigDecimal.ZERO;
         for (ShoppingItem item : items) {
-            subtotal = subtotal.add(new BigDecimal(String.valueOf(item.getSubtotal())));
+            subtotal = subtotal.add(BigDecimal.valueOf(item.getSubtotal()));
         }
         return subtotal.doubleValue();
     }
@@ -38,7 +38,7 @@ public class ShoppingCart {
 
         for (ShoppingItem item : items) {
             BigDecimal taxRate = BigDecimal.ZERO;
-            BigDecimal itemSubtotal = new BigDecimal(String.valueOf(item.getSubtotal()));
+            BigDecimal itemSubtotal = BigDecimal.valueOf(item.getSubtotal());
 
             if (location.equals("CA")) {
                 if (item.getProduct().getCategory() != ProductCategory.FOOD) {
@@ -63,8 +63,8 @@ public class ShoppingCart {
 
 
     public double getTotal() {
-        BigDecimal subtotal = new BigDecimal(String.valueOf(getSubtotal()));
-        BigDecimal tax = new BigDecimal(String.valueOf(getTotalTax()));
+        BigDecimal subtotal = BigDecimal.valueOf(getSubtotal());
+        BigDecimal tax = BigDecimal.valueOf(getTotalTax());
 
         return subtotal.add(tax).doubleValue();
     }
