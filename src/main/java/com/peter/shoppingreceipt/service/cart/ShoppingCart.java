@@ -22,6 +22,9 @@ public class ShoppingCart {
 
     public void addItem(String productName, double price, int quantity) {
         Product product = ProductDatabase.getProductByName(productName);
+        if (product == null) {
+            throw new IllegalArgumentException("Product not found: " + productName);
+        }
         items.add(new ShoppingItem(product, price, quantity));
     }
 
