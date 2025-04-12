@@ -20,9 +20,9 @@ public class ShoppingCart {
         this.taxStrategy = TaxStrategyFactory.getTaxStrategy(location);
     }
 
-    public void addItem(String productName, int quantity) {
+    public void addItem(String productName, double price, int quantity) {
         Product product = ProductDatabase.getProductByName(productName);
-        items.add(new ShoppingItem(product, quantity));
+        items.add(new ShoppingItem(product, price, quantity));
     }
 
     public BigDecimal getSubtotal() {
@@ -56,7 +56,7 @@ public class ShoppingCart {
 
         for (ShoppingItem item : items) {
             String name = item.getProduct().getName();
-            double price = item.getProduct().getPrice();
+            double price = item.getPrice();
             int qty = item.getQuantity();
             System.out.printf("%-15s %10s %10d\n",
                     name, "$" + df.format(price), qty);

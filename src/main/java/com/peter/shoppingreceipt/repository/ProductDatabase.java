@@ -8,10 +8,10 @@ import java.util.List;
 
 public class ProductDatabase {
     private static final List<Product> products = List.of(
-            new Product("book", 17.99, ProductCategory.BOOKS_AND_STATIONERY),
-            new Product("potato chips", 3.99, ProductCategory.FOOD),
-            new Product("pencil", 2.99, ProductCategory.BOOKS_AND_STATIONERY),
-            new Product("shirt", 29.99, ProductCategory.CLOTHING));
+            new Product("book", ProductCategory.BOOKS_AND_STATIONERY),
+            new Product("potato chips", ProductCategory.FOOD),
+            new Product("pencil", ProductCategory.BOOKS_AND_STATIONERY),
+            new Product("shirt", ProductCategory.CLOTHING));
 
     public static Product getProductByName(String name) {
         return products.stream()
