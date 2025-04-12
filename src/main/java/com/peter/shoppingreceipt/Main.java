@@ -1,7 +1,7 @@
 package com.peter.shoppingreceipt;
 
 
-import com.peter.shoppingreceipt.service.ShoppingCart;
+import com.peter.shoppingreceipt.service.cart.ShoppingCart;
 
 public class Main {
     public static void main(String[] args) {

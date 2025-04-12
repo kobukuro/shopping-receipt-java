@@ -1,23 +1,23 @@
-package com.peter.shoppingreceipt.service;
+package com.peter.shoppingreceipt.service.cart;
 
 
 import com.peter.shoppingreceipt.entity.Product;
 import com.peter.shoppingreceipt.entity.ShoppingItem;
-import com.peter.shoppingreceipt.entity.ProductCategory;
 import com.peter.shoppingreceipt.repository.ProductDatabase;
+import com.peter.shoppingreceipt.service.tax.TaxStrategyFactory;
+import com.peter.shoppingreceipt.service.tax.strategy.TaxCalculationStrategy;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingCart {
-    private final String location;
     private final List<ShoppingItem> items = new ArrayList<>();
+    private final TaxCalculationStrategy taxStrategy;
 
     public ShoppingCart(String location) {
-        this.location = location;
+        this.taxStrategy = TaxStrategyFactory.getTaxStrategy(location);
     }
 
     public void addItem(String productName, int quantity) {
@@ -25,48 +25,27 @@ public class ShoppingCart {
         items.add(new ShoppingItem(product, quantity));
     }
 
-    public double getSubtotal() {
+    public BigDecimal getSubtotal() {
         BigDecimal subtotal = BigDecimal.ZERO;
         for (ShoppingItem item : items) {
             subtotal = subtotal.add(BigDecimal.valueOf(item.getSubtotal()));
         }
-        return subtotal.doubleValue();
+        return subtotal;
     }
 
-    public double getTotalTax() {
+    public BigDecimal getTotalTax() {
         BigDecimal totalTax = BigDecimal.ZERO;
 
         for (ShoppingItem item : items) {
-            BigDecimal taxRate = BigDecimal.ZERO;
-            BigDecimal itemSubtotal = BigDecimal.valueOf(item.getSubtotal());
-
-            if (location.equals("CA")) {
-                if (item.getProduct().getCategory() != ProductCategory.FOOD) {
-                    taxRate = new BigDecimal("0.0975");
-                }
-            } else if (location.equals("NY")) {
-                if (item.getProduct().getCategory() != ProductCategory.FOOD &&
-                        item.getProduct().getCategory() != ProductCategory.CLOTHING) {
-                    taxRate = new BigDecimal("0.08875");
-                }
-            }
-
-            BigDecimal itemTax = itemSubtotal.multiply(taxRate);
+            BigDecimal itemTax = taxStrategy.calculateTax(item);
             totalTax = totalTax.add(itemTax);
         }
 
-        BigDecimal nickel = new BigDecimal("0.05");
-        totalTax = totalTax.divide(nickel, 0, RoundingMode.CEILING).multiply(nickel);
-
-        return totalTax.doubleValue();
+        return taxStrategy.roundTax(totalTax);
     }
 
-
-    public double getTotal() {
-        BigDecimal subtotal = BigDecimal.valueOf(getSubtotal());
-        BigDecimal tax = BigDecimal.valueOf(getTotalTax());
-
-        return subtotal.add(tax).doubleValue();
+    public BigDecimal getTotal() {
+        return getSubtotal().add(getTotalTax());
     }
 
     public void printReceipt() {
@@ -74,6 +53,7 @@ public class ShoppingCart {
 
         System.out.printf("%-15s %10s %10s\n", "item", "price", "qty");
         System.out.println();
+
         for (ShoppingItem item : items) {
             String name = item.getProduct().getName();
             double price = item.getProduct().getPrice();
