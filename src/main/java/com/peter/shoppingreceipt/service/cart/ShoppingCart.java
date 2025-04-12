@@ -21,6 +21,12 @@ public class ShoppingCart {
     }
 
     public void addItem(String productName, double price, int quantity) {
+        if (price < 0) {
+            throw new IllegalArgumentException("Price cannot be negative: " + price);
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero: " + quantity);
+        }
         Product product = ProductDatabase.getProductByName(productName);
         if (product == null) {
             throw new IllegalArgumentException("Product not found: " + productName);
